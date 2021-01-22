@@ -12,6 +12,7 @@ MORSE_CODE = {'.-': 'a', '-...': 'b', '-.-.': 'c', '-..': 'd', '.': 'e', '..-.':
 
 class MorseDecoder():
 
+    # Creates a new mapping for every key in the dict where dots and dashes are replaced by zeros and ones
     def create_decoded(self, key):
         temp = ''
         for e in key:
@@ -21,6 +22,7 @@ class MorseDecoder():
                 temp+='1'
         return temp
 
+    # Counts the max amount of concurring symbols in a string
     def count_symbols(self, symbol, signal):
         counter = 0
         temp = 0
@@ -33,6 +35,7 @@ class MorseDecoder():
                 counter = temp
         return counter
 
+    # Constructor, initializes all constants and setups for GPIO pins
     def __init__(self):
         self.decoded = {self.create_decoded(key): value for key, value in MORSE_CODE.items()}
         self.reset()
@@ -45,6 +48,9 @@ class MorseDecoder():
         GPIO.setup(PIN_RED_LED_2, GPIO.OUT, GPIO.LOW)
         GPIO.setup(PIN_BLUE_LED, GPIO.OUT, GPIO.LOW)
 
+        print(colored('Welcome to', 'white', attrs=['bold']), colored('M', 'red', attrs=['bold']), colored('O', 'yellow', attrs=['bold']), colored('R', 'green', attrs=['bold']), colored('S', 'blue', attrs=['bold']), colored('E ', 'cyan', attrs=['bold']), colored('D', 'magenta', attrs=['bold']), colored('E', 'red', attrs=['bold']), colored('c', 'yellow'), colored('O', 'green', attrs=['bold']), colored('D', 'blue', attrs=['bold']), colored('E ', 'cyan', attrs=['bold']), colored('R', 'magenta', attrs=['bold']), colored('! Hold space to start.', 'white', attrs=['bold']))
+
+    # Resets all instance variables
     def reset(self):
         self.current_signal = ''
         self.current_stream = ''
@@ -54,6 +60,7 @@ class MorseDecoder():
         self.switch = 0
         self.switch_2 = 1
     
+    # Also serves as button input, if space is pressed the pin state of the button pin will change. Then returns the GPIO.input() from GPIO object
     def read_one_signal(self):
         if keyboard.is_pressed('space'):
             GPIO.pin_states[PIN_BTN] = GPIO.PUD_DOWN
@@ -62,7 +69,7 @@ class MorseDecoder():
             GPIO.pin_states[PIN_BTN] = GPIO.PUD_UP
         return GPIO.input(PIN_BTN)
             
-
+    # Runs a timed loop where a signal is read, base time is adjustable
     def decoding_loop(self):
         while True:
             signal = self.read_one_signal()
@@ -72,10 +79,10 @@ class MorseDecoder():
                 self.process_signal(signal)
             time.sleep(self.BASE_TIME)
 
+    #Processes the incoming stream of signal for each instant of base time. Then divides symbols and processes them seperately
     def process_signal(self, signal):
         if self.switch:
             self.current_signal += str(signal)
-            """print(self.current_signal)"""
             if len(self.current_signal) > 1:
                 if self.count_symbols(0, self.current_signal[:-1]) >= 7 and self.current_signal[-1] == '1':
                     self.process_symbol(self.current_signal[:-1])
@@ -85,10 +92,12 @@ class MorseDecoder():
                     self.process_symbol(self.current_signal[:-1])
                     self.current_signal = self.current_signal[-1]
                     self.handle_symbol_end()
-            self.show_message()
-                
-            
+                if self.count_symbols(0, self.current_signal[:-1]) > 3 and self.current_signal[-1] == '1':
+                    cprint('\nInvalid length of pause', 'red', attrs=['bold'], file=sys.stderr)
+                    raise KeyboardInterrupt()
+            self.show_message() 
 
+    #Processes a stream of signal which contains a symbol, throws exceptions if input is invalis
     def process_symbol(self, symbol):
         temp_2 = symbol.split('0')
         temp_2 = list(filter(lambda item: item, temp_2))
@@ -107,27 +116,29 @@ class MorseDecoder():
         try:
             self.current_word += self.decoded[self.current_symbol]
         except KeyError:
-            cprint('Your input is invalid!', 'red', attrs=['bold'], file=sys.stderr)
+            cprint('\nYour input is invalid!', 'red', attrs=['bold'], file=sys.stderr)
             raise KeyboardInterrupt
-        
         self.current_stream = ''
         
-
+    #Updates the instance variable 'current_symbol'
     def update_current_symbol(self, signal):
         self.current_symbol += signal
 
+    # Called on read symbol end, clears the current_symbol-variable, ready for a new symbol
     def handle_symbol_end(self):
         self.current_symbol = ''
 
+    # Called on word end (long pause), will add a space at the end of the word and clear the current_word-variable
     def handle_word_end(self):
         self.handle_symbol_end()
         self.current_sentence += self.current_word + ' '
         self.current_word = ''
 
+    # Function responsibla for GUI
     def show_message(self):
-            message = 'Current signal: {}'.format(self.current_signal)
+            message = '_Current signal: {}'.format(self.current_signal)
             message2 = 'Current word: {}'.format(self.current_word)
-            message3 = 'Current sentence: {} \r'.format(self.current_sentence)
+            message3 = 'Current sentence: {}                        \r'.format(self.current_sentence)
             print(colored(message, 'cyan', attrs=['reverse', 'blink']), colored(message2, 'green'), colored(message3, 'blue'), end = ' \r')
 
 def main():
@@ -135,7 +146,7 @@ def main():
         M_decoder = MorseDecoder()
         M_decoder.decoding_loop()
     except KeyboardInterrupt:
-        show_error_and_exit(colored('\nProgram terminated', 'red'))
+        show_error_and_exit(colored('\nProgram terminated', 'red', attrs=['bold']))
     finally:
         GPIO.cleanup()
 
