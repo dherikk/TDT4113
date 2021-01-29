@@ -38,7 +38,6 @@ class MorseDecoder():
     # Constructor, initializes all constants and setups for GPIO pins
     def __init__(self):
         self.decoded = {self.create_decoded(key): value for key, value in MORSE_CODE.items()}
-        self.reset()
 
         self.BASE_TIME = 0.9
 
@@ -48,10 +47,8 @@ class MorseDecoder():
         GPIO.setup(PIN_RED_LED_2, GPIO.OUT, GPIO.LOW)
         GPIO.setup(PIN_BLUE_LED, GPIO.OUT, GPIO.LOW)
 
-        print(colored('Welcome to', 'white', attrs=['bold']), colored('M', 'red', attrs=['bold']), colored('O', 'yellow', attrs=['bold']), colored('R', 'green', attrs=['bold']), colored('S', 'blue', attrs=['bold']), colored('E ', 'cyan', attrs=['bold']), colored('D', 'magenta', attrs=['bold']), colored('E', 'red', attrs=['bold']), colored('c', 'yellow'), colored('O', 'green', attrs=['bold']), colored('D', 'blue', attrs=['bold']), colored('E ', 'cyan', attrs=['bold']), colored('R', 'magenta', attrs=['bold']), colored('! Hold space to start.', 'white', attrs=['bold']))
+        print(colored('Welcome to', 'white', attrs=['bold']), colored('M', 'red', attrs=['bold']), colored('O', 'yellow', attrs=['bold']), colored('R', 'green', attrs=['bold']), colored('S', 'blue', attrs=['bold']), colored('E ', 'cyan', attrs=['bold']), colored('D', 'magenta', attrs=['bold']), colored('E', 'red', attrs=['bold']), colored('C ', 'yellow'), colored('O', 'green', attrs=['bold']), colored('D', 'blue', attrs=['bold']), colored('E ', 'cyan', attrs=['bold']), colored('R', 'magenta', attrs=['bold']), colored('! Hold space to start.', 'white', attrs=['bold']))
 
-    # Resets all instance variables
-    def reset(self):
         self.current_signal = ''
         self.current_stream = ''
         self.current_symbol = ''
@@ -59,7 +56,7 @@ class MorseDecoder():
         self.current_sentence = ''
         self.switch = 0
         self.switch_2 = 1
-    
+  
     # Also serves as button input, if space is pressed the pin state of the button pin will change. Then returns the GPIO.input() from GPIO object
     def read_one_signal(self):
         if keyboard.is_pressed('space'):
@@ -84,7 +81,7 @@ class MorseDecoder():
         if self.switch:
             self.current_signal += str(signal)
             if len(self.current_signal) > 1:
-                if self.count_symbols(0, self.current_signal[:-1]) >= 7 and self.current_signal[-1] == '1':
+                if self.count_symbols(0, self.current_signal[:-1]) >= 7:
                     self.process_symbol(self.current_signal[:-1])
                     self.current_signal = self.current_signal[-1]
                     self.handle_word_end()
