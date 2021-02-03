@@ -30,7 +30,8 @@ class Player:
 
     def enter_name(self):
         """The player enters their name which is saved in this instance of the class"""
-        return input('Enter the name of the player:')
+        tmp_1 = 'Enter the name of player with ID {}: '.format(self.player_id)
+        return input(tmp_1)
 
 class Action:
     """This class contains a move chosen by a player, with also defined greater than or equal
@@ -167,8 +168,8 @@ class Tournament:
 
 def main():
     """Main method"""
-    player_1 = MostCommon()
-    player_2 = Historian(4)
+    player_1 = Sequential()
+    player_2 = Random()
     stm = Tournament(player_1, player_2, 1000)
     stm.arrange_tournament()
 
