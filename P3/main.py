@@ -92,19 +92,26 @@ class Unbreakable(Cipher):
         self.key = key
         
     def encode(self, text):
-        ## Endr denne
-        return ''.join([Cipher.alphabet[((Cipher.alphabet.index(i) + self.key) % 95)] for i in text])
+        return ''.join([Cipher.alphabet[
+            ((Cipher.alphabet.index(text[i]) + Cipher.alphabet.index(self.key[i % len(self.key)])) % 95)
+            ] for i in range(len(text))])
 
     def decode(self, text):
-        return ''.join([Cipher.alphabet[((Cipher.alphabet.index(i) - self.key) % 95)] for i in text])
+        return ''.join([Cipher.alphabet[
+            ((Cipher.alphabet.index(text[i]) - Cipher.alphabet.index(self.key[i % len(self.key)])) % 95)
+            ] for i in range(len(text))])
     
+"""class RSA(Cipher):
 
+    def __init__(self):
+        """
 def main():
     """Main method"""
     Af = Affine((4,2))
-    encoded = Af.encode('test   ~~')
+    Ub = Unbreakable('Pizza')
+    encoded = Ub.encode('test   ~~')
     print(encoded)
-    decoded = Af.decode(encoded)
+    decoded = Ub.decode(encoded)
     print(decoded)
     
 if __name__ == "__main__":
