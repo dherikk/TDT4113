@@ -77,7 +77,7 @@ class Multiplicative(Cipher):
         try:
             inversekey = modular_inverse(key, 95)
         except Exception:
-            print('Invalid key for Multiplicative')
+            raise TypeError('Invalid keys for Multiplicative')
         return self.encode(text, inversekey)
 
 class Affine(Cipher):
@@ -124,44 +124,23 @@ class Hacker:
 
     def break_text(self, text):
 
+        tmp_1 = [modular_inverse(i, 95) for i in range(32, 127) if extended_gcd(i, 95)[0] == 1]
+
         if isinstance(self.algorithm, Caesar):
             return [i for i in range(32, 127) if self.algorithm.decode(text, i) in Hacker.wordlist]
             
         elif isinstance(self.algorithm, Multiplicative):
-            tmp_1 = [modular_inverse(i, 95) for i in range(32, 127) if extended_gcd(i, 95)[0] == 1]
             return [i for i in tmp_1 if self.algorithm.decode(text, i) in Hacker.wordlist]
             
         elif isinstance(self.algorithm, Affine):
-            return [(i, j) for i in range(32, 127) for j in range(32, 127) if self.algorithm.decode(text, (i, j)) in Hacker.wordlist]
+            return [(i, j) for i in tmp_1 for j in tmp_1 if self.algorithm.decode(text, (i, j)) in Hacker.wordlist]
 
         elif isinstance(self.algorithm, Unbreakable):
             return [i for i in Hacker.wordlist if self.algorithm.decode(text, i) in Hacker.wordlist]
 
-
 def main():
-    Ca = Caesar()
-    Mu = Multiplicative()
-    Af = Affine()
-    Ub = Unbreakable()
-    """key_1 = 33
-    key_2 = [322, 2323]
-    key_3 = 'wefwefwdsf'
-    encoded = Ca.encode('test   ~~', key_1)
-    print(encoded)
-    decoded = Ca.decode(encoded, key_1)
-    print(decoded)
-    rsa = RSA()
-    P1.set_key(P2.RSA_keys())
-    encoded = P1.operate_cipher('')
-    print(encoded)
-    decoded = P2.operate_cipher(encoded)
-    print(decoded)"""
-    P1 = Sender(662234, Ca)
-    P2 = Reciever(662234, Ca)
-    encoded = P1.operate_cipher('test   ~~')
-    decoded = P2.operate_cipher(encoded)
-    print(decoded)
-    
+    pass
+
 if __name__ == "__main__":
     main()
 
