@@ -58,8 +58,9 @@ class Function:
         return result
 
 class Operator:
-    def __init__(self, operator):
+    def __init__(self, operator, strenght):
         self.operator = operator
+        self.strength = strenght
 
     def execute(self, element_1, element_2, debug = True):
         # Check type
@@ -74,7 +75,7 @@ class Operator:
         return result
 
 class Calculator:
-    def __init__():
+    def __init__(self):
         self.functions = {
             "EXP" : Function(np.exp),
             "LOG" : Function(np.log),
@@ -82,11 +83,11 @@ class Calculator:
             "COS" : Function(np.cos),
             "SQRT" : Function(np.sqrt)
         }
-        self. operators = {
-            "ADD" : Operator (np.add , 0),
-            "MULTIPLY" : Operator(np.multiply , 1),
-            "DIVIDE" : Operator (np.divide , 1),
-            "SUBTRACT" : Operator(np.subtract , 0)
+        self.operators = {
+            "ADD" : Operator(np.add, 0),
+            "MULTIPLY" : Operator(np.multiply, 1),
+            "DIVIDE" : Operator(np.divide, 1),
+            "SUBTRACT" : Operator(np.subtract, 0)
         }
         self.output_queue = Queue()
 
