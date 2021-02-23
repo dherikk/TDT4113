@@ -69,8 +69,6 @@ def test_all():
     assert int(var1) == 5
     assert int(var2) == 722
 
-
-
 def main():
     test_Stack()
     test_Queue()

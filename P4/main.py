@@ -25,8 +25,6 @@ class Container:
 
 class Queue(Container):
     """Queue subclass of container"""
-    def __init__(self):
-        super().__init__()
 
     def peek(self):
         assert not self.isEmpty()
@@ -39,8 +37,6 @@ class Queue(Container):
 
 class Stack(Container):
     """Stack subclass of container"""
-    def __init__(self):
-        super().__init__()
 
     def peek(self):
         assert not self.isEmpty()
