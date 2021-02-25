@@ -1,5 +1,5 @@
 """Tests for P4 main"""
-import main as m
+import logic as m
 
 def test_stack():
     """tests stack data struct"""
