@@ -19,4 +19,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        python3 -m pylint `ls -R|grep .py$|xargs`
+        python3 `ls -R|grep .py$|xargs`
