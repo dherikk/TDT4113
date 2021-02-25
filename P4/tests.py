@@ -75,11 +75,11 @@ def test_all():
     """Tests all"""
     calc = m.Calculator()
     test = "((15 DIVIDE (7 SUBTRACT (1 ADD 1))) MULTIPLY 3) SUBTRACT (2 ADD (1 ADD 1))"
-    test2 = "15 ADD 700 ADD 7"
+    test2 = "15 ADD 700 ADD 8"
     var1 = calc.calculate_expression(test)
     var2 = calc.calculate_expression(test2)
     assert int(var1) == 5
-    assert int(var2) == 722
+    assert int(var2) == 723
 
 
 def main():
