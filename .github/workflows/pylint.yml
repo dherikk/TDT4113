@@ -19,6 +19,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-         for f in .; do
-         pylint $f
-         done
+         find . -type f -name "*.py" | xargs pylint
